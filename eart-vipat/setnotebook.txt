@@ -1,0 +1,74 @@
+(1, 2 ข้ามได้ถ้าทำ setenv.txt แล้ว)
+
+1. ติดตั้ง virtualenv โดยกำหนด version ของภาษา python ดั่งนี้
+    1.1 py -m venv myvenv
+    1.2 pip install django psycopg2-binary
+
+2. สร้าง project Django
+
+3. ติดตั้ง `django-extensions` และ `jupyter notebook` ด้วยคำสั่ง
+
+   3.1 pip install django-extensions ipython jupyter notebook   
+
+
+4. จากนั้นให้แก้ไข version ของ package ภายใน jupyter และ notebook
+
+    4.1 pip install ipython==8.25.0 jupyter_server==2.14.1 jupyterlab==4.2.2 jupyterlab_server==2.27.2
+
+    4.2 แก้ไข version notebook
+    pip install notebook==6.5.6
+    ( หากติดตั้ง หรือ run jupyter ไม่ได้ให้ลองเปลี่ยน notebook version ดังนี้ `6.5.7` )
+
+5. จากนั้นสร้าง directory ชื่อ `notebooks`
+
+    mkdir notebooks
+
+6. เพิ่ม `django-extensions` ใน INSTALLED_APPS ในไฟล์ settings.py
+
+
+    INSTALLED_APPS = [
+        "django.contrib.admin",
+        "django.contrib.auth",
+        "django.contrib.contenttypes",
+        "django.contrib.sessions",
+        "django.contrib.messages",
+        "django.contrib.staticfiles",
+
+        "django_extensions",
+        "blogs",
+    ]
+
+
+7. ทำการ start Jupyter Notebook server ด้วย command 
+
+    python manage.py shell_plus --notebook
+
+
+ซึ่งจะเปิด Jupyter Notebook ขึ้นมาใน Web Browser
+
+8. เข้าไปที่ folder `notebooks`
+
+9. สร้าง ไฟล์ ipynb สำหรับใช้กับ project django
+
+10. จากนั้นใน Cell แรกของไฟล์ Notebook เพิ่ม code นี้ลงไป
+
+    import os
+    os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true"
+
+    
+
+**** เวลาเข้าในทำที่ไฟล์ .ipynb อย่าลืมเปลี่ยน Kernel เป็น Django Shell-Plus ด้วยล่ะ ***
+
+
+
+### เสริมถ้าอยาก run .ipynb ใน VS Code เลย (ถ้า อาจาร์ยให้นะ 55555)
+
+1. ลง django-extensions 
+pip install django-extensions
+
+2.เพิ่มคำสั่งนี้ลงในไฟล์ .ipynb 
+import django
+os.environ['DJANGO_SETTINGS_MODULE'] = 'myshop.settings'  myshop คือชื่อ project ของเรา
+django.setup()
+
+3.วางไฟล์ให้อยู่ที่เดียวกับ manage.py

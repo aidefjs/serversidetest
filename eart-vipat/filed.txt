@@ -1,0 +1,94 @@
+### Fields types
+
+- BooleanField(**options)
+- CharField(max_length=None, **options)
+- EmailField(max_length=254, **options)
+- URLField(max_length=200, **options)
+- UUIDField(**options)
+- TextField(**options)
+- DateField(auto_now=False, auto_now_add=False, **options)
+- DateTimeField(auto_now=False, auto_now_add=False, **options)
+- TimeField(auto_now=False, auto_now_add=False, **options)
+- FileField(upload_to='', storage=None, max_length=100, **options)
+- ImageField(upload_to=None, height_field=None, width_field=None, max_length=100, **options)
+- DecimalField(max_digits=None, decimal_places=None, **options)
+- IntegerField(**options)
+- PositiveIntegerField(**options)
+- JSONField(encoder=None, decoder=None, **options)
+
+### Field options
+
+- primary_key: ถ้ามีค่าเป็น True คือ column นี้เป็น primary key ของ table (ถ้าไม่กำหนด Django จะสร้าง column ชื่อ `id` ให้อัตโนมัติเป็น primary key)
+- unique: ถ้ามีค่าเป็น True คือ ค่าใน column นี้ห้ามซ้ำ
+- null: ถ้ามีค่าเป็น True คือ column นี้มีค่าเป็น null ได้
+- blank: ถ้ามีค่าเป็น True คือ column นี้มีค่าเป็น "" หรือ empty string ได้
+- default: กำหนดค่าเริ่มต้นให้กับ field นี้
+- choices: กำหนด ENUM ให้เลือกเฉพาะค่าที่กำหนด
+
+
+### Attibute ใน Fields 
+
+- auto_now = True คือจะบันทึกค่า datetime.now() ทุกครั้งที่มีการแก้ไขค่า (INSERT + UPDATE)
+- auto_now_add = True คือจะบันทึกค่า datetime.now() ตอนที่สร้างใหม่ (INSERT)
+- upload_to คือกำหนด path ที่จะ save file
+
+
+### Example 1
+class MyModel(models.Model):
+
+    # file will be uploaded to MEDIA_ROOT/uploads
+    upload = models.FileField(upload_to="uploads/")
+
+    # file will be saved to MEDIA_ROOT/uploads/2015/01/30
+    upload = models.FileField(upload_to="uploads/%Y/%m/%d/")
+
+### Example 2
+models.DecimalField(max_digits=5, decimal_places=2)
+
+### Example 3 (การสร้าง ENUM)
+from django.db import models
+
+
+class Student(models.Model):
+    FRESHMAN = "FR"
+    SOPHOMORE = "SO"
+    JUNIOR = "JR"
+    SENIOR = "SR"
+    GRADUATE = "GR"
+    YEAR_IN_SCHOOL_CHOICES = {
+        FRESHMAN: "Freshman",
+        SOPHOMORE: "Sophomore",
+        JUNIOR: "Junior",
+        SENIOR: "Senior",
+        GRADUATE: "Graduate",
+    }
+
+    year_in_school = models.CharField(
+        max_length=2,
+        # ตรงนี้คือ กำหนด ENUM
+        choices=YEAR_IN_SCHOOL_CHOICES,
+        default=FRESHMAN,
+    )
+
+    def is_upperclass(self):
+        return self.year_in_school in {self.JUNIOR, self.SENIOR}
+
+- db_index: ถ้ามีค่าเป็น True คือจะสร้าง index ใน database สำหรับ column นี้
+
+### Example 4 (UUID)
+
+import uuid
+
+class MyModel(models.Model):
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+
+default: กำหนดค่าเริ่มต้นให้เป็น UUID ใหม่
+editable: กำหนดว่า field นี้ไม่สามารถแก้ไขได้
+unique: กำหนดให้ค่าใน field นี้ห้ามซ้ำ
+
+### Example 5 (ImageField)
+
+class MyModel(models.Model):
+    image = models.ImageField(upload_to="images/", height_field=None, width_field=None)
+
+upload_to: กำหนด path ที่จะ save image file

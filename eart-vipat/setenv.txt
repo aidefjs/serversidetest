@@ -1,0 +1,95 @@
+1. Create virtual environment
+
+1.1 Create project folder
+> mkdir my_projects
+
+1.2 Create a virtual environment (Windows)
+> py -m venv myvenv
+
+1.2 Activate virtual environment (Windows)
+> myvenv\Scripts\activate.bat
+
+1.3 Install Django
+> pip install django
+
+1.4 Create project "myblogs"
+> django-admin startproject myblogs 
+(myblogs จะเปลี่ยนเป็นชื่ออะไรก็ได้)
+
+1.5 Create the "blogs" app
+> python manage.py startapp blogs 
+(blogs จะเปลี่ยนเป็นชื่ออะไรก็ได้)
+
+1.6 Start server 
+> python manage.py runserver
+
+1.7 Database setup (ดูว่าในเครื่องมี postgres ไหม)
+> postgres --version 
+postgres (PostgreSQL) 15.0
+
+1.8 ติดตั้ง Postgres Client `psycopg2`
+> pip install psycopg2
+
+1.9 สร้าง Database (ทำใน pgadmin ก็ได้)
+psql -U postgres 
+CREATE DATABASE ชื่อ Database;
+
+
+2. ไปทำการตั้งค่าใน `myblogs/settings.py` 
+(myblogs คือ ชื่อ app ที่สร้างจาก คำสั่งในข้อ 1.5)
+
+**HINT: ไปสร้าง DB ใน postgres ก่อนนะครับ สร้าง DB ชื่อ "blogs"**
+
+2.1 Database setting
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "blogs",
+        "USER": "db_username",
+        "PASSWORD": "password",
+        "HOST": "localhost",
+        "PORT": "5432",
+    }
+}
+
+2.2 Add app blogs to INSTALLED_APPS
+INSTALLED_APPS = [
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    # blogs คือชื่อ app ที่เราสร้างขึ้นมา
+    "blogs",
+]
+
+2.3 ทำการสร้าง models ต่างๆ
+
+เพิ่ม code นี้ใน `blogs/models.py`
+
+from django.db import models
+
+
+class Author(models.Model):
+    first_name = models.CharField(max_length=150)
+    last_name = models.CharField(max_length=200)
+    email = models.CharField(max_length=150)
+
+    def __str__(self):
+        return f"{self.first_name} {self.last_name}"
+
+
+class Category(models.Model):
+    name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
+
+ลองสั่ง command: makemigrations เพื่อให้ Django ทำการสร้างไฟล์ migration ขึ้นมา
+
+> python manage.py makemigrations
+
+เพื่อทำการสั่งใน Django สร้าง table ใน database จากไฟล์ migrations ใช้ command
+
+> python manage.py migrate
