@@ -1,0 +1,49 @@
+{% extends 'layout.html' %}
+{% load static %}
+
+{% block title %} Project {% endblock %}
+
+{% block nav %}  
+    {% include 'nav.html' %} 
+{% endblock %}
+
+{% block head %}  
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+{% endblock %}
+
+{% block content %}
+    <main>
+        <div class="head">
+            <h1>Project</h1>
+        </div>
+        <div>
+            <a href="{% url 'formProject' %}" class="btn"> New Project </a>
+        </div>
+        <div class="itemGroup">
+            {% for i in project %}
+            <div class="item">
+                <!-- โปรเจค id และ ชื่อ -->
+                <div>{{i.id}} {{i.name}}</div>
+
+                <!-- วันเริ่ม และ วันกำหนดส่งโปรเจค -->
+                <div>{{i.start_date}} - {{i.due_date}}</div>
+                
+                <div class="action">
+                    <!-- กำหนด path ให้ถูกต้อง -->
+                    <a href="/employee/project/{{ i.id }}/" class="edit btn">แก้ไข</a>
+                    
+                    <!-- ถ้า code มันแจ้งเตือนอะไรก็ปล่อยไปนะครับไม่มีผลอะไร  -->
+
+                    <button type="submit" onclick="deleteProject({{ i.id }}, '{{csrf_token}}')" class="delete">Delete</button>
+                </div>
+            </div>
+            {% endfor %}
+            
+        </div>
+        
+    </main>
+{% endblock %}
+
+{% block script %}
+<script src="{% static '\project.js' %}"></script>
+{% endblock %}

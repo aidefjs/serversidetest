@@ -1,0 +1,73 @@
+{% extends 'layout.html' %}
+
+
+{% load humanize %}
+
+{% block title %} Employee {% endblock %}
+
+{% block nav %}  
+    {% include 'nav.html' %} 
+{% endblock %}
+
+        
+
+
+{% block content %}
+        <main>
+            <div class="head">
+                <h1>Employee</h1>
+                <div class>
+                    <!-- จำนวนพนักงานทั้งหมด -->
+                    <h1>Total {{dicnumemp}} People</h1>
+                </div>
+            </div>
+            <div>
+                <a href="{% url 'formEMP' %}" class="btn"> New Employee </a>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Full Name</th>
+                        <th>Genger</th>
+                        <th>Birth Date</th>
+                        <th>Hire Date</th>
+                        <th>Salary</th>
+                        <th>Department</th>
+                        <th>Position</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                   {% for i in info %}
+                   <!-- <tr {% if forloop.first %} class="first-row" {% elif forloop.last %} class="last-row" {% endif %}> -->
+                   <tr {% if forloop.first or forloop.last %} style="color: red;" {% endif %}>
+                        <!-- employee id -->
+                        <td>{{ forloop.counter }}</td> 
+                        <!-- ชื่อ นามสกุล -->
+                        <td> {{i.first_name}} {{i.last_name}}</td>
+                        <!-- เพศ -->
+                        <td> {% if i.gender == "M" %} Male
+                            {% elif i.gender == 'F'%}Female 
+                            {% elif i.gender == 'LGBT'%}LGBT
+                            {% else%} Other 
+                            {% endif %}
+                        </td>
+                        <!-- วันเกิด -->
+                        <td>{{ i.birth_date|date:"d/m/Y" }}</td>
+                        <!-- วันเริ่มงาน -->
+                        <td> {{i.hire_date|date:"d/m/Y"}}</td>
+                        <!-- เงินเดือน -->
+                        <td>{{ i.salary|intcomma }}</td>
+                        <!-- แผนก -->
+                        <td> {{i.position.department.name}}</td>
+                        <!-- ตำแหน่งงาน -->
+                        <td> {{i.position.name}}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </main>
+    {% endblock %}
+    
+</html>
